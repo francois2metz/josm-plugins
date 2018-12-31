@@ -168,11 +168,12 @@ public class PhotoAdjustWorker {
 
                 if (dragData.isImageSelected(dragPhoto)) {
                     for (ImageEntry photo: dragData.getSelectedImages()) {
-                        movePhoto(photo, dragData, translation);
+                        translatePhoto(photo, dragData, translation);
                     }
                 } else {
-                    movePhoto(dragPhoto, dragData, translation);
+                    translatePhoto(dragPhoto, dragData, translation);
                 }
+                dragData.notifyImageUpdate();
             }
         }
     }
@@ -202,18 +203,18 @@ public class PhotoAdjustWorker {
     }
 
     /**
-     * Apply the given translation to the poto
+     * Apply the given translation to the photo
      * @param photo The photo to move
      * @param data ImageData of the photo
      * @param translation the translation to apply
      */
-    private void movePhoto(ImageEntry photo, ImageData data, Point2D translation) {
+    private void translatePhoto(ImageEntry photo, ImageData data, Point2D translation) {
         final Point2D centerPoint = MainApplication.getMap().mapView.getPoint2D(photo.getPos());
-
         LatLon newPos = MainApplication.getMap().mapView.getLatLon(
                 centerPoint.getX() + translation.getX(),
                 centerPoint.getY() + translation.getY());
-        data.updateImagePosition(photo, newPos);
+        photo.setPos(newPos);
+        photo.flagNewGpsData();
     }
 
     /**
