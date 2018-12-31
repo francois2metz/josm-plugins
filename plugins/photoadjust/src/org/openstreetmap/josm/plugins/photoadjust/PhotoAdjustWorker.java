@@ -92,17 +92,17 @@ public class PhotoAdjustWorker {
                             // rotate in select mode.
                             //
                             // Combinations:
-                            // S ... alt pressed
+                            // A ... alt pressed
                             // C ... control pressed
                             // pos ... photo has a position set == is displayed on the map
                             // nopos ... photo has no position set
                             //
-                            // S + pos: position at mouse
-                            // S + nopos: position at mouse
+                            // A + pos: position at mouse
+                            // A + nopos: position at mouse
                             // C + pos: change orientation
                             // C + nopos: ignored
-                            // S + C + pos: change orientation
-                            // S + C + nopos: ignore
+                            // A + C + pos: change orientation
+                            // A + C + nopos: ignore
                             for (ImageEntry img: entries) {
                                 if (isCtrl) {
                                     if (img.getPos() != null) {
