@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.plugins.photoadjust;
 
-import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
@@ -81,8 +80,8 @@ public class PhotoAdjustWorker {
                 && imageLayers != null && !imageLayers.isEmpty()) {
             // Check if modifier key is pressed and change to
             // image viewer photo if it is.
-            final boolean isAlt = (evt.getModifiers() & InputEvent.ALT_MASK) != 0;
-            final boolean isCtrl = (evt.getModifiers() & InputEvent.CTRL_MASK) != 0;
+            final boolean isAlt = (evt.getModifiersEx() & MouseEvent.ALT_DOWN_MASK) == MouseEvent.ALT_DOWN_MASK;
+            final boolean isCtrl = (evt.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) == MouseEvent.CTRL_DOWN_MASK;
             if (isAlt || isCtrl) {
                 for (GeoImageLayer layer: imageLayers) {
                     if (layer.isVisible()) {
@@ -152,7 +151,7 @@ public class PhotoAdjustWorker {
      */
     public void doMouseDragged(MouseEvent evt) {
         if (dragData != null && dragPhoto != null) {
-            if ((evt.getModifiers() & InputEvent.CTRL_MASK) != 0) {
+            if ((evt.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) == MouseEvent.CTRL_DOWN_MASK) {
                 if (dragData.isImageSelected(dragPhoto)) {
                     for (ImageEntry photo: dragData.getSelectedImages()) {
                         changeDirection(photo, dragData, evt);
