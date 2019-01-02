@@ -33,7 +33,7 @@ public class PhotoAdjustWorker {
     public void reset() {
         dragPhoto = null;
         dragData = null;
-        dragOffset = null;
+        dragOffset = EastNorth.ZERO;
     }
 
     /**
