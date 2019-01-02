@@ -3,11 +3,12 @@ package org.openstreetmap.josm.plugins.photoadjust;
 
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
-import java.awt.geom.Point2D;
 import java.util.List;
 
 import org.openstreetmap.josm.data.ImageData;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.projection.ProjectionRegistry;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.gui.layer.geoimage.ImageEntry;
@@ -23,7 +24,7 @@ public class PhotoAdjustWorker {
     // Offset between center of the photo and point where it is
     // clicked.  This must be in pixels to maintain the same offset if
     // the photo is moved very far.
-    private Point2D dragOffset;
+    private EastNorth dragOffset;
     private boolean centerViewIsDisabled = false;
     private boolean centerViewNeedsEnable = false;
 
@@ -33,7 +34,7 @@ public class PhotoAdjustWorker {
     public void reset() {
         dragPhoto = null;
         dragData = null;
-        dragOffset = new Point2D.Double(0, 0);
+        dragOffset = null;
     }
 
     /**
@@ -161,10 +162,9 @@ public class PhotoAdjustWorker {
                 }
             } else {
                 disableCenterView();
-                final Point2D currentPhotoPos = MainApplication.getMap().mapView.getPoint2D(dragPhoto.getPos());
-                Point2D translation = new Point2D.Double(
-                        evt.getX() - currentPhotoPos.getX() + dragOffset.getX(),
-                        evt.getY() - currentPhotoPos.getY() + dragOffset.getY());
+                final EastNorth startEN = dragPhoto.getPos().getEastNorth(ProjectionRegistry.getProjection()).subtract(dragOffset);
+                final EastNorth currentEN = MainApplication.getMap().mapView.getEastNorth(evt.getX(), evt.getY());
+                final EastNorth translation = currentEN.subtract(startEN);
 
                 if (dragData.isImageSelected(dragPhoto)) {
                     for (ImageEntry photo: dragData.getSelectedImages()) {
@@ -185,9 +185,9 @@ public class PhotoAdjustWorker {
      * @param evt Mouse event from one of the mouse adapters.
      */
     private void setDragOffset(ImageEntry photo, MouseEvent evt) {
-        final Point2D centerPoint = MainApplication.getMap().mapView.getPoint2D(photo.getPos());
-        dragOffset = new Point2D.Double(centerPoint.getX() - evt.getX(),
-                                        centerPoint.getY() - evt.getY());
+        final EastNorth centerEN = photo.getPos().getEastNorth(ProjectionRegistry.getProjection());
+        final EastNorth offsetEN = MainApplication.getMap().mapView.getEastNorth(evt.getX(), evt.getY());
+        dragOffset = centerEN.subtract(offsetEN);
     }
 
     /**
@@ -208,11 +208,10 @@ public class PhotoAdjustWorker {
      * @param data ImageData of the photo
      * @param translation the translation to apply
      */
-    private void translatePhoto(ImageEntry photo, ImageData data, Point2D translation) {
-        final Point2D centerPoint = MainApplication.getMap().mapView.getPoint2D(photo.getPos());
-        LatLon newPos = MainApplication.getMap().mapView.getLatLon(
-                centerPoint.getX() + translation.getX(),
-                centerPoint.getY() + translation.getY());
+    private void translatePhoto(ImageEntry photo, ImageData data, EastNorth translation) {
+        final EastNorth startEN = photo.getPos().getEastNorth(ProjectionRegistry.getProjection());
+        final EastNorth newPosEN = startEN.add(translation);
+        final LatLon newPos = MainApplication.getMap().mapView.getProjection().eastNorth2latlon(newPosEN);
         photo.setPos(newPos);
         photo.flagNewGpsData();
     }
