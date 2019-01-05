@@ -82,6 +82,11 @@ public class PhotoAdjustWorker {
             // image viewer photo if it is.
             final boolean isAlt = (evt.getModifiersEx() & MouseEvent.ALT_DOWN_MASK) == MouseEvent.ALT_DOWN_MASK;
             final boolean isCtrl = (evt.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) == MouseEvent.CTRL_DOWN_MASK;
+            final boolean isShift = (evt.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) == MouseEvent.SHIFT_DOWN_MASK;
+            // ignore key press with shift, to not conflict with selection
+            if (isShift) {
+                return;
+            }
             if (isAlt || isCtrl) {
                 for (GeoImageLayer layer: imageLayers) {
                     if (layer.isVisible()) {
