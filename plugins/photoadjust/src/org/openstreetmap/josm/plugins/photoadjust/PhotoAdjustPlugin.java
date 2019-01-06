@@ -10,10 +10,6 @@ import java.util.List;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
@@ -25,7 +21,7 @@ import org.openstreetmap.josm.plugins.PluginInformation;
  * allows to move photos on the map and to place photos without
  * coordinates (untagged photos) on the map.
  */
-public class PhotoAdjustPlugin extends Plugin implements ActiveLayerChangeListener, LayerChangeListener {
+public class PhotoAdjustPlugin extends Plugin implements ActiveLayerChangeListener {
 
     private GeoImageLayer imageLayer;
     private MouseAdapter mouseAdapter;
@@ -81,12 +77,10 @@ public class PhotoAdjustPlugin extends Plugin implements ActiveLayerChangeListen
     public void mapFrameInitialized(MapFrame oldFrame, MapFrame newFrame) {
         if (oldFrame == null && newFrame != null) {
             MainApplication.getLayerManager().addAndFireActiveLayerChangeListener(this);
-            MainApplication.getLayerManager().addLayerChangeListener(this);
             PhotoAdjustMapMode adjustMode = new PhotoAdjustMapMode(worker);
             adjustMode.installMapMode(newFrame);
         } else {
             MainApplication.getLayerManager().removeActiveLayerChangeListener(this);
-            MainApplication.getLayerManager().removeLayerChangeListener(this);
         }
     }
 
@@ -110,22 +104,5 @@ public class PhotoAdjustPlugin extends Plugin implements ActiveLayerChangeListen
                 MainApplication.getMap().mapView.addMouseMotionListener(mouseMotionAdapter);
             }
         }
-    }
-
-    @Override
-    public void layerAdded(LayerAddEvent e) {
-        if (e.getAddedLayer() instanceof GeoImageLayer) {
-            ((GeoImageLayer) e.getAddedLayer()).getImageData().enableMultipleSelection();
-        }
-    }
-
-    @Override
-    public void layerRemoving(LayerRemoveEvent e) {
-        // ignore
-    }
-
-    @Override
-    public void layerOrderChanged(LayerOrderChangeEvent e) {
-        // ignore
     }
 }
