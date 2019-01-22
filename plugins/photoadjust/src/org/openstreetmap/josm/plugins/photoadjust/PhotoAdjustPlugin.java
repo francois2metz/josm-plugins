@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
@@ -37,6 +38,8 @@ public class PhotoAdjustPlugin extends Plugin implements ActiveLayerChangeListen
         super(info);
         GeoImageLayer.registerMenuAddition(new UntaggedGeoImageLayerAction());
         PhotoPropertyEditor.init();
+        MainMenu menu = MainApplication.getMenu();
+        MainMenu.add(menu.toolsMenu, new InterpolateImages());
         initAdapters();
     }
 
@@ -90,7 +93,7 @@ public class PhotoAdjustPlugin extends Plugin implements ActiveLayerChangeListen
         Layer oldLayer = e.getPreviousActiveLayer();
         Layer newLayer = MainApplication.getLayerManager().getActiveLayer();
         if (oldLayer instanceof GeoImageLayer
-            && newLayer instanceof GeoImageLayer) {
+                && newLayer instanceof GeoImageLayer) {
             imageLayer = (GeoImageLayer)newLayer;
         } else {
             if (oldLayer instanceof GeoImageLayer) {
