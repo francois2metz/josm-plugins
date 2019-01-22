@@ -108,13 +108,16 @@ public class PhotoAdjustWorker {
                             // C + nopos: ignored
                             // A + C + pos: change orientation
                             // A + C + nopos: ignore
+                            final EastNorth centerEN = getCentroid(entries);
+                            final EastNorth currentEN = MainApplication.getMap().mapView.getEastNorth(evt.getX(), evt.getY());
+                            final EastNorth translation = currentEN.subtract(centerEN);
                             for (ImageEntry img: entries) {
                                 if (isCtrl) {
                                     if (img.getPos() != null) {
                                         changeDirection(img, layer.getImageData(), evt);
                                     }
                                 } else { // alt pressed
-                                    movePhoto(img, layer.getImageData(), evt);
+                                    translatePhoto(img, layer.getImageData(), translation);
                                 }
                                 dragPhoto = img;
                             }
@@ -138,6 +141,18 @@ public class PhotoAdjustWorker {
                 }
             }
         }
+    }
+
+    public EastNorth getCentroid(List<ImageEntry> entries) {
+        EastNorth center = new EastNorth(0, 0);
+
+        for (ImageEntry entry: entries) {
+            final EastNorth photoEN = entry.getPos().getEastNorth(ProjectionRegistry.getProjection());
+            center = center.add(photoEN);
+        }
+
+        int size = entries.size();
+        return new EastNorth(center.getX() / size, center.getY() / size);
     }
 
     /**
@@ -192,18 +207,6 @@ public class PhotoAdjustWorker {
         final EastNorth centerEN = photo.getPos().getEastNorth(ProjectionRegistry.getProjection());
         final EastNorth offsetEN = MainApplication.getMap().mapView.getEastNorth(evt.getX(), evt.getY());
         dragOffset = centerEN.subtract(offsetEN);
-    }
-
-    /**
-     * Move the photo to the mouse position.
-     *
-     * @param photo The photo to move.
-     * @param data ImageData of the photo.
-     * @param evt Mouse event from one of the mouse adapters.
-     */
-    private void movePhoto(ImageEntry photo, ImageData data, MouseEvent evt) {
-        LatLon newPos = MainApplication.getMap().mapView.getLatLon(evt.getX(), evt.getY());
-        data.updateImagePosition(photo, newPos);
     }
 
     /**
