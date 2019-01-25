@@ -37,9 +37,11 @@ public class PhotoAdjustPlugin extends Plugin implements ActiveLayerChangeListen
     public PhotoAdjustPlugin(PluginInformation info) {
         super(info);
         GeoImageLayer.registerMenuAddition(new UntaggedGeoImageLayerAction());
+        GeoImageLayer.registerMenuAddition(new SetDirectionToASequence());
         PhotoPropertyEditor.init();
         MainMenu menu = MainApplication.getMenu();
         MainMenu.add(menu.toolsMenu, new InterpolateImages());
+
         initAdapters();
     }
 
