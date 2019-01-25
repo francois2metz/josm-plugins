@@ -4,6 +4,7 @@ package org.openstreetmap.josm.plugins.photoadjust;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.geom.Point2D;
 import java.util.Collections;
 import java.util.List;
@@ -22,6 +23,7 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.gui.layer.geoimage.ImageEntry;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Interpolate a part of a geotagged sequence
@@ -32,7 +34,8 @@ public class InterpolateImages extends JosmAction implements LayerChangeListener
         super(tr("Interpolate between the 2 images"),
                 null,
                 tr("Interpolate images position between the 2 images selected"),
-                null, false, false);
+                Shortcut.registerShortcut("tools:interpolatesimages", tr("Tools: {0}", tr("Interpolate between the 2 images selected")), KeyEvent.VK_I,  Shortcut.CTRL_SHIFT),
+                false, false);
 
         installAdapters();
         updateEnabledState();
