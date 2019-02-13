@@ -102,18 +102,16 @@ public class PhotoAdjustWorker {
                             // pos ... photo has a position set == is displayed on the map
                             // nopos ... photo has no position set
                             //
-                            // A + pos: position at mouse
-                            // A + nopos: position at mouse
+                            // A + C + pos: position at mouse
+                            // A + C + nopos: position at mouse
                             // C + pos: change orientation
                             // C + nopos: ignored
-                            // A + C + pos: change orientation
-                            // A + C + nopos: ignore
                             for (ImageEntry img: entries) {
-                                if (isCtrl) {
+                                if (isCtrl && !isAlt) {
                                     if (img.getPos() != null) {
                                         changeDirection(img, layer.getImageData(), evt);
                                     }
-                                } else { // alt pressed
+                                } else if (isCtrl && isAlt) {
                                     movePhoto(img, layer.getImageData(), evt);
                                 }
                                 dragPhoto = img;
